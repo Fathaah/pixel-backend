@@ -67,7 +67,7 @@ def get_images(ws, prompt, ws_fe):
 async def run_job(prompt, ws_fe):
     
     img_urls = None
-
+    gpu_server_address = fetch_gpu_ws()
     # connect to the gpu server websocket
     print("connecting to ws://{}/ws?clientId={}".format(gpu_server_address, client_id))
     with connect("ws://{}/ws?clientId={}".format(gpu_server_address, client_id)) as ws:
