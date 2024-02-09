@@ -5,7 +5,6 @@ import urllib.parse
 from utils import get_gen_img_urls
 from docdb import az_cosmos_db
 import asyncio
-import websockets
 from websockets.server import serve
 from websockets.sync.client import connect
 from build_prompt import build_prompt
