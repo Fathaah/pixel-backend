@@ -120,5 +120,5 @@ def fetch_gpu_address():
 def spawn_app():
     gpu_server_address = fetch_gpu_address()
     print("GPU server address: ", gpu_server_address)
-    app.run(port=8080)
+    app.run(port=80)
 
