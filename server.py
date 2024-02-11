@@ -92,7 +92,7 @@ def run_job(prompt, ws_fe):
     return img_urls
 
 # a get api request to fetch the gpu server address
-@app.route('/products', methods=['GET'])
+@app.route('/api/products', methods=['GET'])
 def get_products():
     return jsonify(ProductHandler().get_all_products())
 
