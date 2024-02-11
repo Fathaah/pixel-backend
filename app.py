@@ -14,7 +14,6 @@ from flask_sock import Sock
 from product_handler import ProductHandler
 
 server_address = "0.0.0.0"
-global gpu_server_address
 client_id = str(uuid.uuid4())
 app = Flask(__name__)
 sock = Sock(app)
@@ -70,7 +69,7 @@ def get_images(ws, prompt, ws_fe):
     return prompt_id, output_images
 
 def run_job(prompt, ws_fe):
-    
+    global gpu_server_address
     img_urls = None
     gpu_server_address = fetch_gpu_address()
     # connect to the gpu server websocket
@@ -118,7 +117,5 @@ def fetch_gpu_address():
     return items[0]['value']
 
 if __name__ == '__main__':
-    gpu_server_address = fetch_gpu_address()
-    print("GPU server address: ", gpu_server_address)
-    app.run()
+    app.run(debug=True)
 
