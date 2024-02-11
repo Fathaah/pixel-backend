@@ -104,6 +104,11 @@ def fe_ws(sock):
         response = run_job(data, sock)
         sock.send(json.dumps(response))
 
+@app.route('/')
+def index():
+   print('Request for index page received')
+   return jsonify({"message": "Welcome to the server"})
+
 # move to utils
 @cachetools.cached(cachetools.TTLCache(maxsize=1024, ttl=30000))
 def fetch_gpu_address():
@@ -115,5 +120,5 @@ def fetch_gpu_address():
 def spawn_app():
     gpu_server_address = fetch_gpu_address()
     print("GPU server address: ", gpu_server_address)
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run()
 
