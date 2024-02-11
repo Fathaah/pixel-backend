@@ -117,8 +117,8 @@ def fetch_gpu_address():
     items = db_client.query_items(query)
     return items[0]['value']
 
-def spawn_app():
+if __name__ == '__main__':
     gpu_server_address = fetch_gpu_address()
     print("GPU server address: ", gpu_server_address)
-    app.run(port=80)
+    app.run()
 
