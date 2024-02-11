@@ -65,6 +65,8 @@ jobs:
           app-name: 'pixel-backend'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7BBB41FDD414B3192DFB94AF62143D2 }}
-
-      - name: Start the server
-        run: python server.py
+      
+      - name: 'Start the web app'
+        run: | 
+          source venv/bin/activate
+          python server.py
