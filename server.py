@@ -104,7 +104,7 @@ async def on_message(ws):
     await ws.send(json.dumps(response))
 
 async def main():
-    async with serve(on_message, server_address, 8080):
+    async with serve(on_message, server_address, 8000):
         print("Server started")
         await asyncio.Future()  # run forever
 
