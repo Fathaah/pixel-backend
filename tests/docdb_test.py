@@ -1,4 +1,7 @@
 from docdb import az_cosmos_db
+from product_handler import ProductHandler
+from pixel_models.product import Product
+import uuid
 
 class TestCosmosDB:
     def test_add_item(self):
@@ -16,6 +19,17 @@ class TestCosmosDB:
         items = cosmos.query_items(query)
         print(items)
 
+    def add_product(self, product):
+        productHandler = ProductHandler()
+        productHandler.add_product(product)
+    
+    def get_all_products(self):
+        productHandler = ProductHandler()
+        products = productHandler.get_all_products()
+        print(products)
+
 if __name__ == "__main__":
     test = TestCosmosDB()
-    test.test_query_items()
+    test.get_all_products()
+    # test.add_product(
+    #     Product(str(uuid.uuid4()),"Test Product", "Test Type", "Test Thumbnail", "Test Lora Model", "Test Trigger Word"))

@@ -10,7 +10,7 @@ class az_cosmos_db:
         self.container = self.database.get_container_client(container_name)
 
     def add_item(self, item):
-        self.container.create_item(body=item)
+        self.container.upsert_item(item)
 
     def query_items(self, query):
         items = list(self.container.query_items(
@@ -22,3 +22,13 @@ class az_cosmos_db:
     def get_item(self, item_id, partition_key):
         item = self.container.read_item(item=item_id, partition_key=partition_key)
         return item
+    
+    def strip_meta(self, doc):
+
+        meta_props = ["_rid", "_ts", "_self", "_etag", "_attachments"]
+        new_doc = {}
+        for prop in doc:
+            if prop not in meta_props:
+                new_doc[prop] = doc[prop]
+        
+        return new_doc

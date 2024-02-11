@@ -9,10 +9,15 @@ from websockets.server import serve
 from websockets.sync.client import connect
 from build_prompt import build_prompt
 import cachetools
+from flask import Flask, jsonify
+from flask_sock import Sock
+from product_handler import ProductHandler
 
 server_address = "0.0.0.0"
-gpu_server_address = "localhost:8083"
+global gpu_server_address
 client_id = str(uuid.uuid4())
+app = Flask(__name__)
+sock = Sock(app)
 
 def queue_prompt(prompt):
     p = {"prompt": prompt, "client_id": client_id}
@@ -64,10 +69,10 @@ def get_images(ws, prompt, ws_fe):
 
     return prompt_id, output_images
 
-async def run_job(prompt, ws_fe):
+def run_job(prompt, ws_fe):
     
     img_urls = None
-    gpu_server_address = fetch_gpu_ws()
+    gpu_server_address = fetch_gpu_address()
     # connect to the gpu server websocket
     print("connecting to ws://{}/ws?clientId={}".format(gpu_server_address, client_id))
     with connect("ws://{}/ws?clientId={}".format(gpu_server_address, client_id)) as ws:
@@ -86,6 +91,19 @@ async def run_job(prompt, ws_fe):
     print("out images ready")
     return img_urls
 
+# a get api request to fetch the gpu server address
+@app.route('/products', methods=['GET'])
+def get_products():
+    return jsonify(ProductHandler().get_all_products())
+
+@sock.route('/ws')
+def fe_ws(sock):
+    while True:
+        data = sock.receive()
+        print("Received data: ", data)
+        response = run_job(data, sock)
+        sock.send(json.dumps(response))
+
 # move to utils
 @cachetools.cached(cachetools.TTLCache(maxsize=1024, ttl=30000))
 def fetch_gpu_address():
@@ -94,25 +112,8 @@ def fetch_gpu_address():
     items = db_client.query_items(query)
     return items[0]['value']
 
-async def on_message(ws):
-    prompt = await ws.recv()
-    print(f"Received prompt: {prompt}")
-
-    # spin up the job to act on the prompt
-    response = await run_job(prompt, ws)
-
-    await ws.send(json.dumps(response))
-
-async def main():
-    async with serve(on_message, server_address, 8000):
-        print("Server started")
-        await asyncio.Future()  # run forever
-
-
-if __name__ == "__main__":
+def spawn_app():
     gpu_server_address = fetch_gpu_address()
     print("GPU server address: ", gpu_server_address)
-    asyncio.run(main())
+    app.run(host="localhost", port=8000, debug=True)
 
-
-# Spawn two threads, 1 for gpu server and 1 for the fe
