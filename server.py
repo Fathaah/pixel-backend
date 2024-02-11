@@ -10,8 +10,8 @@ from websockets.sync.client import connect
 from build_prompt import build_prompt
 import cachetools
 
-server_address = "127.0.0.1"
-gpu_server_address = "141.195.16.189:40261"
+server_address = "0.0.0.0"
+gpu_server_address = "localhost:8083"
 client_id = str(uuid.uuid4())
 
 def queue_prompt(prompt):
@@ -88,7 +88,7 @@ async def run_job(prompt, ws_fe):
 
 # move to utils
 @cachetools.cached(cachetools.TTLCache(maxsize=1024, ttl=30000))
-def fetch_gpu_ws():
+def fetch_gpu_address():
     db_client = az_cosmos_db("config") # not good, use singleton class later
     query = "SELECT * FROM c WHERE c.id = 'gpu_server_address'"
     items = db_client.query_items(query)
@@ -104,12 +104,14 @@ async def on_message(ws):
     await ws.send(json.dumps(response))
 
 async def main():
-    async with serve(on_message, "localhost", 8083):
+    async with serve(on_message, server_address, 8080):
         print("Server started")
         await asyncio.Future()  # run forever
 
 
 if __name__ == "__main__":
+    gpu_server_address = fetch_gpu_address()
+    print("GPU server address: ", gpu_server_address)
     asyncio.run(main())
 
 

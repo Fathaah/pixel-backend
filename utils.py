@@ -4,7 +4,7 @@ from io import BytesIO
 from blob_storage import az_blob_storage
 import cachetools
 
-@cachetools.cached(cachetools.TTLCache(maxsize=1024, ttl=900000))
+# @cachetools.cached(cachetools.TTLCache(maxsize=1024, ttl=900000))
 def load_json_from_file(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)

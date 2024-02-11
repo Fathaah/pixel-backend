@@ -8,7 +8,7 @@
       "scheduler": "normal",
       "denoise": 1,
       "model": [
-        "12",
+        "11",
         0
       ],
       "positive": [
@@ -31,7 +31,7 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "v1-5-pruned-emaonly.ckpt"
+      "ckpt_name": "sd_xl_base_1.0.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -42,7 +42,7 @@
     "inputs": {
       "width": 1216,
       "height": 816,
-      "batch_size": 4
+      "batch_size": 2
     },
     "class_type": "EmptyLatentImage",
     "_meta": {
@@ -121,22 +121,6 @@
     "class_type": "LoraLoader",
     "_meta": {
       "title": "Load LoRA"
-    }
-  },
-  "12": {
-    "inputs": {
-      "b1": 1.3,
-      "b2": 1.4,
-      "s1": 0.9,
-      "s2": 0.2,
-      "model": [
-        "11",
-        0
-      ]
-    },
-    "class_type": "FreeU_V2",
-    "_meta": {
-      "title": "FreeU_V2"
     }
   }
 }
