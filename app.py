@@ -11,7 +11,7 @@ from websockets.server import serve
 from websockets.sync.client import connect
 from build_prompt import build_prompt
 import cachetools
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request
 from flask_sock import Sock
 from flask_cors import CORS
 from product_handler import ProductHandler
@@ -21,7 +21,7 @@ client_id = str(uuid.uuid4())
 app = Flask(__name__)
 sock = Sock(app)
 CORS(app)
-admin_hash = '37ee0b9955c44f1c8769583cd56605618a31471781e046f49aa41c726b0c425c' # os.environ.get('ADMIN_HASH')
+admin_hash = os.environ.get('ADMIN_HASH')
 
 def queue_prompt(prompt):
     p = {"prompt": prompt, "client_id": client_id}
@@ -103,10 +103,10 @@ def get_products():
         try:
             return jsonify(productHandler.get_all_products())
         except Exception as e:
-            abort(500, description=f"An error {e} occurred while fetching the products. Please try again later.")
+            return jsonify({'message':f"An error {e} occurred while fetching the products. Please try again later."}),500
     else:
         # raise a 401 error if the admin key is invalid
-        abort(401, description="Invalid admin key provided. Access denied.")
+        return jsonify({'message':'Invalid admin key provided. Access denied.'}),401
 
 @sock.route('/ws')
 def fe_ws(sock):
@@ -137,7 +137,6 @@ def validate_admin():
     #Create hash from the username and password
     curr_hash = hashlib.sha256(f'{username}:{password}'.encode('utf-8')).hexdigest()
     #Check if the hash is equal to the admin hash and return the response
-    print(curr_hash, admin_hash)
     response = {'success':False, 'message': 'Invalid credentials provided. Access denied.'}
     if curr_hash == admin_hash:
         response['success'] = True
