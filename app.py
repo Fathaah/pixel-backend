@@ -103,7 +103,7 @@ def get_products():
     #Validate the admin key received in the query string
     if request.args['key'] == admin_hash:
         try:
-            return jsonify(productHandler.get_all_products())
+            return jsonify(ProductHandler().get_all_products())
         except Exception as e:
             return jsonify({'message':f"An error {e} occurred while fetching the products. Please try again later."}),500
     else:
@@ -162,7 +162,5 @@ def validate_admin():
     return response
 
 if __name__ == '__main__':
-    global productHandler
-    productHandler = ProductHandler()
     app.run(debug=True)
 
