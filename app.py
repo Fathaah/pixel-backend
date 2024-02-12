@@ -2,6 +2,8 @@ import uuid
 import json
 import urllib.request
 import urllib.parse
+import os
+import hashlib
 from utils import get_gen_img_urls
 from docdb import az_cosmos_db
 import asyncio
@@ -9,7 +11,7 @@ from websockets.server import serve
 from websockets.sync.client import connect
 from build_prompt import build_prompt
 import cachetools
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sock import Sock
 from product_handler import ProductHandler
 
@@ -17,6 +19,7 @@ server_address = "0.0.0.0"
 client_id = str(uuid.uuid4())
 app = Flask(__name__)
 sock = Sock(app)
+admin_hash = os.environ.get('ADMIN_HASH')
 
 def queue_prompt(prompt):
     p = {"prompt": prompt, "client_id": client_id}
@@ -93,7 +96,14 @@ def run_job(prompt, ws_fe):
 # a get api request to fetch the gpu server address
 @app.route('/api/products', methods=['GET'])
 def get_products():
-    return jsonify(ProductHandler().get_all_products())
+    try:
+        #Validate the admin key received in the query string
+        if request.args['key'] == admin_hash:
+            return jsonify(ProductHandler().get_all_products())
+        else:
+            raise Exception('Invalid admin key received.')
+    except Exception as e:
+        return jsonify({"message": f'An error occured while fetching the products: {str(e)}'})
 
 @sock.route('/ws')
 def fe_ws(sock):
@@ -115,6 +125,20 @@ def fetch_gpu_address():
     query = "SELECT * FROM c WHERE c.id = 'gpu_server_address'"
     items = db_client.query_items(query)
     return items[0]['value']
+
+@app.route('/api/admin/validate', methods=['POST'])
+def validate_admin():
+    #Get username and password from the formdata
+    username = request.form.get('username')
+    password = request.form.get('password')
+    #Create hash from the username and password
+    curr_hash = hashlib.sha256(f'{username}:{password}'.encode('utf-8')).hexdigest()
+    #Check if the hash is equal to the admin hash and return the response
+    response = {'success':False}
+    if curr_hash == admin_hash:
+        response['success'] = True
+        response['admin_id'] = curr_hash
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
