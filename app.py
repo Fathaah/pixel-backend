@@ -9,9 +9,11 @@ from websockets.server import serve
 from websockets.sync.client import connect
 from prompt_builder import build_prompt
 import cachetools
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sock import Sock
 from product_handler import ProductHandler
+from prompt_enhancer import PromptEnhancer
+from keyword_generator import KeywordGenerator
 
 server_address = "0.0.0.0"
 client_id = str(uuid.uuid4())
@@ -107,6 +109,21 @@ def fe_ws(sock):
 def index():
    print('Request for index page received')
    return jsonify({"message": "Welcome to the server"})
+
+@app.route('/api/enhance_prompt', methods=['GET'])
+def enhance_prompt():
+    request_data = request.get_json()
+    prompt = request_data.get('prompt')
+    item = request_data.get('item')
+    enhanced_prompt = PromptEnhancer().enhance_prompt(prompt, item)
+    return jsonify({"enhanced_prompt": enhanced_prompt})
+
+@app.route('/api/generate_keywords', methods=['GET'])
+def generate_keywords():
+    request_data = request.get_json()
+    item = request_data.get('item')
+    keywords = KeywordGenerator().generate_keywords(item)
+    return jsonify({"keywords": keywords})
 
 # move to utils
 @cachetools.cached(cachetools.TTLCache(maxsize=1024, ttl=30000))
