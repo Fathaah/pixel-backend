@@ -3,7 +3,7 @@ from openai import OpenAI
 
 class KeywordGenerator:
     def __init__(self):
-        self.api_key = '#os.environ.get('OPENAI_API_KEY')
+        self.api_key = os.environ.get('OPENAI_API_KEY')
         self.client = OpenAI(api_key=self.api_key)
 
     def generate_keywords(self, item):
