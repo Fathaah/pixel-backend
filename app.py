@@ -11,15 +11,17 @@ from websockets.server import serve
 from websockets.sync.client import connect
 from build_prompt import build_prompt
 import cachetools
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_sock import Sock
+from flask_cors import CORS
 from product_handler import ProductHandler
 
 server_address = "0.0.0.0"
 client_id = str(uuid.uuid4())
 app = Flask(__name__)
 sock = Sock(app)
-admin_hash = os.environ.get('ADMIN_HASH')
+CORS(app)
+admin_hash = '37ee0b9955c44f1c8769583cd56605618a31471781e046f49aa41c726b0c425c' # os.environ.get('ADMIN_HASH')
 
 def queue_prompt(prompt):
     p = {"prompt": prompt, "client_id": client_id}
@@ -96,14 +98,15 @@ def run_job(prompt, ws_fe):
 # a get api request to fetch the gpu server address
 @app.route('/api/products', methods=['GET'])
 def get_products():
-    try:
-        #Validate the admin key received in the query string
-        if request.args['key'] == admin_hash:
-            return jsonify(ProductHandler().get_all_products())
-        else:
-            raise Exception('Invalid admin key received.')
-    except Exception as e:
-        return jsonify({"message": f'An error occured while fetching the products: {str(e)}'})
+    #Validate the admin key received in the query string
+    if request.args['key'] == admin_hash:
+        try:
+            return jsonify(productHandler.get_all_products())
+        except Exception as e:
+            abort(500, description=f"An error {e} occurred while fetching the products. Please try again later.")
+    else:
+        # raise a 401 error if the admin key is invalid
+        abort(401, description="Invalid admin key provided. Access denied.")
 
 @sock.route('/ws')
 def fe_ws(sock):
@@ -134,12 +137,15 @@ def validate_admin():
     #Create hash from the username and password
     curr_hash = hashlib.sha256(f'{username}:{password}'.encode('utf-8')).hexdigest()
     #Check if the hash is equal to the admin hash and return the response
-    response = {'success':False}
+    print(curr_hash, admin_hash)
+    response = {'success':False, 'message': 'Invalid credentials provided. Access denied.'}
     if curr_hash == admin_hash:
         response['success'] = True
         response['admin_id'] = curr_hash
     return response
 
 if __name__ == '__main__':
+    global productHandler
+    productHandler = ProductHandler()
     app.run(debug=True)
 
