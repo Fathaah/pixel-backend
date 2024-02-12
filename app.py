@@ -7,7 +7,7 @@ from docdb import az_cosmos_db
 import asyncio
 from websockets.server import serve
 from websockets.sync.client import connect
-from build_prompt import build_prompt
+from prompt_builder import build_prompt
 import cachetools
 from flask import Flask, jsonify
 from flask_sock import Sock

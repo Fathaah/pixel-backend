@@ -1,4 +1,5 @@
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
+import json
 
 class az_cosmos_db:
     def __init__(self, container_name, database_name="pixel-web" , endpoint="https://pixel-docdb.documents.azure.com:443/"):
