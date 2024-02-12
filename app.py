@@ -158,6 +158,7 @@ def validate_admin():
     if curr_hash == admin_hash:
         response['success'] = True
         response['admin_id'] = curr_hash
+        response['message'] = 'Access granted'
     return response
 
 if __name__ == '__main__':
