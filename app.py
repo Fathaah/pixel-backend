@@ -123,7 +123,7 @@ def index():
    print('Request for index page received')
    return jsonify({"message": "Welcome to the server"})
 
-@app.route('/api/enhance_prompt', methods=['GET'])
+@app.route('/api/enhance_prompt', methods=['POST'])
 def enhance_prompt():
     request_data = request.get_json()
     prompt = request_data.get('prompt')
@@ -133,8 +133,7 @@ def enhance_prompt():
 
 @app.route('/api/generate_keywords', methods=['GET'])
 def generate_keywords():
-    request_data = request.get_json()
-    item = request_data.get('item')
+    item = request.args.get('item').replace("_", " ")
     keywords = KeywordGenerator().generate_keywords(item)
     return jsonify({"keywords": keywords})
 
