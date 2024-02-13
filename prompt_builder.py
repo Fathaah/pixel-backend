@@ -14,7 +14,7 @@ def build_prompt(mini_prompt):
             trigger_word=mini_prompt.get("triggerWord")
         )
     prompt = load_json_from_file('workflows/Lora_FreeU.json')
-    prompt["6"]["inputs"]["text"] = mini_prompt.prompt + ", " + ", ".join(mini_prompt.keywords) + ", (" + mini_prompt.trigger_word + ":1.5)"
+    prompt["6"]["inputs"]["text"] = mini_prompt.prompt + ", " + ", ".join(mini_prompt.keywords) + ", (" + mini_prompt.trigger_word + ":1.3)"
     prompt["11"]["inputs"]["lora_name"] = mini_prompt.model
     w_and_h = get_w_and_h(int(mini_prompt.aspect_ratio.replace(":", "")))
     prompt["5"]["inputs"]["width"] = w_and_h[0]

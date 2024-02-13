@@ -48,12 +48,16 @@ def get_history(prompt_id):
 def get_images(ws, prompt, ws_fe):
     prompt_id = build_and_queue_prompt(prompt)['prompt_id']
     print("Prompt id: ", prompt_id)
+    ws_fe.send("Image Generation has started.")
     output_images = {}
     while True:
         out = ws.recv()
         if isinstance(out, str):
             message = json.loads(out)
             print(message)
+            if 'value' in message['data']:
+                progress =(message['data']['value'] / message['data']['max']) * 100
+                ws_fe.send(f'Image generation at {progress}%')
             if message['type'] == 'executing':
                 data = message['data']
                 if data['node'] is None and data['prompt_id'] == prompt_id:
@@ -62,6 +66,7 @@ def get_images(ws, prompt, ws_fe):
             continue #previews are binary data
     
     print("collecting images")
+    ws_fe.send("Images are ready, uploading to the cloud...")
     history = get_history(prompt_id)[prompt_id]
     for o in history['outputs']:
         for node_id in history['outputs']:
@@ -80,7 +85,7 @@ def run_job(prompt, ws_fe):
     img_urls = None
     gpu_server_address = fetch_gpu_address()
     # connect to the gpu server websocket
-    print("connecting to ws://{}/ws?clientId={}".format(gpu_server_address, client_id))
+    ws_fe.send("Connecting to the GPU...")
     with connect("ws://{}/ws?clientId={}".format(gpu_server_address, client_id)) as ws:
         # send the prompt to the gpu server
         print("sending prompt to the gpu server")
@@ -93,7 +98,7 @@ def run_job(prompt, ws_fe):
         print(img_urls)
         # close the websocket connection
         ws.close()
-
+    ws_fe.send("Images is being send to you...")
     print("out images ready")
     return img_urls
 
