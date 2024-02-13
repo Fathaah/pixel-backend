@@ -8,7 +8,7 @@ class PromptEnhancer:
 
     def enhance_prompt(self, prompt, item):
 
-        prompt = f"Enhance the prompt for a text to image diffusion model for an advertisment for {item}: {prompt}"
+        prompt = f"Enhance the prompt for a text to image diffusion model for an advertisment for {item} under 40 words: {prompt}"
         
         response = self.client.chat.completions.create(
         model="gpt-4",
