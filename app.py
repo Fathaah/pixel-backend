@@ -17,6 +17,7 @@ from flask_cors import CORS
 from product_handler import ProductHandler
 from prompt_enhancer import PromptEnhancer
 from keyword_generator import KeywordGenerator
+from requests_toolbelt import MultipartEncoder
 
 server_address = "0.0.0.0"
 client_id = str(uuid.uuid4())
@@ -57,7 +58,7 @@ def get_images(ws, prompt, ws_fe):
             print(message)
             if 'value' in message['data']:
                 progress =(message['data']['value'] / message['data']['max']) * 100
-                ws_fe.send(f'Image generation at {progress}%')
+                ws_fe.send(f'Image generation at {progress:.2f}%')
             if message['type'] == 'executing':
                 data = message['data']
                 if data['node'] is None and data['prompt_id'] == prompt_id:
@@ -102,6 +103,29 @@ def run_job(prompt, ws_fe):
     print("out images ready")
     return img_urls
 
+# a post api request to upload an image
+def upload_image_gpu_server(file, content_type='image/png', image_type="input", overwrite=True):
+        global gpu_server_address
+        gpu_server_address = fetch_gpu_address()
+        multipart_data = MultipartEncoder(
+            fields= {
+                'image': (file.filename, file.stream, content_type),
+                'type': image_type,
+                'overwrite': str(overwrite).lower()
+            }
+        )
+
+        data = multipart_data
+        print(data)
+        headers = { 'Content-Type': multipart_data.content_type }
+        request = urllib.request.Request("http://{}/upload/image".format(gpu_server_address), data=data, headers=headers)
+        with urllib.request.urlopen(request) as response:
+            print(response.read())
+            return response.read()
+
+def upload_image_to_gpu_server(file):
+        return upload_image(file)
+
 # a get api request to fetch the gpu server address
 @app.route('/api/products', methods=['GET'])
 def get_products():
@@ -114,6 +138,17 @@ def get_products():
     else:
         # raise a 401 error if the admin key is invalid
         return jsonify({'message':'Invalid admin key provided. Access denied.'}),401
+    
+@app.route('/api/upload', methods=['POST'])
+def upload_image():
+    # Get the uploaded file from the request
+    file = request.files['file']
+    # Process the file as needed
+    print(f"Processing file: {file}")
+    # Upload the file to the GPU server
+    upload_image_gpu_server(file, content_type=file.content_type)
+    # Return a response
+    return jsonify({'message': 'File uploaded successfully'})
 
 @sock.route('/ws')
 def fe_ws(sock):

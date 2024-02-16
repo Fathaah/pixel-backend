@@ -9,4 +9,6 @@ class PromptRequest:
     aspect_ratio: str = "1:1"
     model: str = "lv-000009.safetensors"
     type: str = "lora"
+    filename: str = None
+    influence: float = None
     
