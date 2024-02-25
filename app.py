@@ -157,6 +157,7 @@ def fe_ws(sock):
         print("Received data: ", data)
         response = run_job(data, sock)
         sock.send(json.dumps(response))
+        sock.close()
 
 @app.route('/')
 def index():
