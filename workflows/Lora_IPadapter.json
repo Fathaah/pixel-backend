@@ -110,7 +110,7 @@
       "scheduler": "ddim_uniform",
       "denoise": 1,
       "model": [
-        "5",
+        "31",
         0
       ],
       "positive": [
@@ -135,7 +135,7 @@
     "inputs": {
       "width": 1024,
       "height": 1024,
-      "batch_size": 2
+      "batch_size": 1
     },
     "class_type": "EmptyLatentImage",
     "_meta": {
@@ -203,6 +203,22 @@
     "class_type": "LoraLoader",
     "_meta": {
       "title": "Load LoRA"
+    }
+  },
+  "31": {
+    "inputs": {
+      "b1": 1.3,
+      "b2": 1.4,
+      "s1": 0.9,
+      "s2": 0.2,
+      "model": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "FreeU_V2",
+    "_meta": {
+      "title": "FreeU_V2"
     }
   }
 }
