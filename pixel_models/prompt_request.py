@@ -11,4 +11,7 @@ class PromptRequest:
     type: str = "lora"
     filename: str = None
     influence: float = None
+    generation_seed: int = None
+    refine: bool = True
+    diffusion_steps: int = 20
     

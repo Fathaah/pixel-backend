@@ -21,18 +21,24 @@ def build_prompt_request_obj(mini_prompt):
             model=mini_prompt.get("model"),
             trigger_word=mini_prompt.get("triggerWord"),
             filename=mini_prompt.get("filename"),
-            influence=mini_prompt.get("influence")
+            influence=mini_prompt.get("influence"),
+            generation_seed=mini_prompt.get("generationSeed"),
+            refine=mini_prompt.get("refine"),
+            diffusion_steps=mini_prompt.get("diffusionSteps"),
         )
     return mini_prompt
 
-def build_prompt_lora_request(mini_prompt):
+def build_prompt_lora_request(mini_prompt: PromptRequest):
     prompt = load_json_from_file('workflows/Lora_FreeU.json')
     prompt["6"]["inputs"]["text"] = mini_prompt.prompt + ", " + ", ".join(mini_prompt.keywords) + ", (" + mini_prompt.trigger_word + ":1.3)"
     prompt["11"]["inputs"]["lora_name"] = mini_prompt.model
     w_and_h = get_w_and_h(int(mini_prompt.aspect_ratio.replace(":", "")))
     prompt["5"]["inputs"]["width"] = w_and_h[0]
     prompt["5"]["inputs"]["height"] = w_and_h[1]
-    prompt["3"]["inputs"]["seed"] = random.randint(0, 0xffffffffffffffff)
+    prompt["3"]["inputs"]["seed"] = mini_prompt.generation_seed if (mini_prompt.generation_seed)  else random.randint(0, 0xffffffffffffffff)
+    prompt["3"]["inputs"]["steps"] = mini_prompt.diffusion_steps
+    if(not mini_prompt.refine):
+        prompt["3"]["inputs"]["model"][0] = "11"
     print("Prompt finally is : ", prompt)
     return prompt
 
@@ -43,9 +49,12 @@ def build_prompt_lora_ip_request(mini_prompt):
     w_and_h = get_w_and_h(int(mini_prompt.aspect_ratio.replace(":", "")))
     prompt["10"]["inputs"]["width"] = w_and_h[0]
     prompt["10"]["inputs"]["height"] = w_and_h[1]
-    prompt["9"]["inputs"]["seed"] = random.randint(0, 0xffffffffffffffff)
+    prompt["9"]["inputs"]["seed"] = mini_prompt.generation_seed if (mini_prompt.generation_seed)  else random.randint(0, 0xffffffffffffffff)
+    prompt["9"]["inputs"]["steps"] = mini_prompt.diffusion_steps
     prompt["6"]["inputs"]["image"] = mini_prompt.filename
     prompt["5"]["inputs"]["weight"] = mini_prompt.influence
+    if(not mini_prompt.refine):
+        prompt["9"]["inputs"]["model"][0] = "5"
     print("Prompt finally is : ", prompt)
     return prompt
 
