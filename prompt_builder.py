@@ -7,7 +7,7 @@ def build_prompt(mini_prompt):
     promptRequest = build_prompt_request_obj(mini_prompt)
 
     if(promptRequest.filename is None or promptRequest.filename == ""):
-        return build_prompt_lora_request(promptRequest)
+        return build_prompt_lora_request_advanced(promptRequest)
     else:
         return build_prompt_lora_ip_request(promptRequest)
 
@@ -39,6 +39,34 @@ def build_prompt_lora_request(mini_prompt: PromptRequest):
     prompt["3"]["inputs"]["steps"] = mini_prompt.diffusion_steps
     if(not mini_prompt.refine):
         prompt["3"]["inputs"]["model"][0] = "11"
+    print("Prompt finally is : ", prompt)
+    return prompt
+
+def build_prompt_lora_request_advanced(mini_prompt: PromptRequest):
+    prompt = load_json_from_file('workflows/lora+freeU+refine+api.json')
+    text =  mini_prompt.prompt + ", " + ", ".join(mini_prompt.keywords) + ", (" + mini_prompt.trigger_word + ":1.3)"
+    prompt["30"]["inputs"]["text_l"] = text
+    prompt["30"]["inputs"]["text_g"] = text
+    prompt["40"]["inputs"]["text"] = text
+    # HACK
+    if 'disney' in mini_prompt.keywords:
+        prompt["33"]["inputs"]["text_l"] = 'colorless rendition, extremely poor quality, subpar quality, average quality, awkward cropping, out of focus,realistic photo, bad anatomy, extra hands, extra legs, extra fingers, poorly drawn face, fused face, cloned face, worst feet, extra feet, fused feet, missing fingers, extra fingers, bad fingers, long fingers, short fingers, horn, extra eyes'
+        prompt["33"]["inputs"]["text_g"] = 'colorless rendition, extremely poor quality, subpar quality, average quality, awkward cropping, out of focus,realistic photo, bad anatomy, extra hands, extra legs, extra fingers, poorly drawn face, fused face, cloned face, worst feet, extra feet, fused feet, missing fingers, extra fingers, bad fingers, long fingers, short fingers, horn, extra eyes'
+        prompt["41"]["inputs"]["text_g"] = 'colorless rendition, extremely poor quality, subpar quality, average quality, awkward cropping, out of focus,realistic photo, bad anatomy, extra hands, extra legs, extra fingers, poorly drawn face, fused face, cloned face, worst feet, extra feet, fused feet, missing fingers, extra fingers, bad fingers, long fingers, short fingers, horn, extra eyes'
+    if 'studio' in mini_prompt.keywords:
+        prompt["33"]["inputs"]["text_l"] = 'bad fingers, missing fingers, cropped, blurry, low quality, bad hands, missing legs, missing arms, extra fingers, cg, 3d, unreal' 
+        prompt["33"]["inputs"]["text_g"] = 'bad fingers, missing fingers, cropped, blurry, low quality, bad hands, missing legs, missing arms, extra fingers, cg, 3d, unreal'
+        prompt["41"]["inputs"]["text"] = 'bad fingers, missing fingers, cropped, blurry, low quality, bad hands, missing legs, missing arms, extra fingers, cg, 3d, unreal'
+    
+    prompt["53"]["inputs"]["lora_name"] = mini_prompt.model
+    w_and_h = get_w_and_h(int(mini_prompt.aspect_ratio.replace(":", "")))
+    prompt["5"]["inputs"]["width"] = w_and_h[0]
+    prompt["5"]["inputs"]["height"] = w_and_h[1]
+    prompt["38"]["inputs"]["noise_seed"] = mini_prompt.generation_seed if (mini_prompt.generation_seed)  else random.randint(0, 0xffffffffffffffff)
+    prompt["36"]["inputs"]["noise_seed"] = mini_prompt.generation_seed if (mini_prompt.generation_seed)  else random.randint(0, 0xffffffffffffffff)
+    # prompt["3"]["inputs"]["steps"] = mini_prompt.diffusion_steps
+    # if(not mini_prompt.refine):
+    #     prompt["3"]["inputs"]["model"][0] = "11"
     print("Prompt finally is : ", prompt)
     return prompt
 

@@ -51,6 +51,7 @@ def get_images(ws, prompt, ws_fe):
     print("Prompt id: ", prompt_id)
     ws_fe.send("Image Generation has started.")
     output_images = {}
+    steps = 0
     while True:
         out = ws.recv()
         if isinstance(out, str):
@@ -58,7 +59,10 @@ def get_images(ws, prompt, ws_fe):
             print(message)
             if 'value' in message['data']:
                 progress =(message['data']['value'] / message['data']['max']) * 100
-                ws_fe.send(f'Image generation at {progress:.2f}%')
+                if message['data']['max'] < 7:
+                    ws_fe.send(f'Refining the image {progress:.2f}%')
+                else:
+                    ws_fe.send(f'Image generation at {progress:.2f}%')
             if message['type'] == 'executing':
                 data = message['data']
                 if data['node'] is None and data['prompt_id'] == prompt_id:
