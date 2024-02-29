@@ -12,7 +12,7 @@
     "inputs": {
       "width": 1024,
       "height": 1024,
-      "batch_size": 1
+      "batch_size": 4
     },
     "class_type": "EmptyLatentImage",
     "_meta": {
@@ -63,8 +63,8 @@
       "crop_h": 0,
       "target_width": 4096,
       "target_height": 4096,
-      "text_g": "poorly Rendered face, poorly drawn face, poor facial details, poorly drawn hands, poorly rendered hands, low resolution, blurry image, oversaturated, bad anatomy, signature, watermark, username, error, missing limbs, error, out of frame, extra fingers, mutated hands, poorly drawn hands, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username",
-      "text_l": "poorly Rendered face, poorly drawn face, poor facial details, poorly drawn hands, poorly rendered hands, low resolution, blurry image, oversaturated, bad anatomy, signature, watermark, username, error, missing limbs, error, out of frame, extra fingers, mutated hands, poorly drawn hands, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username",
+      "text_g": "(embedding:ac_neg1.safetensors:1)",
+      "text_l": "(embedding:ac_neg1.safetensors:1)",
       "clip": [
         "53",
         1
@@ -79,12 +79,12 @@
     "inputs": {
       "add_noise": "enable",
       "noise_seed": 901882733428389,
-      "steps": 30,
+      "steps": 28,
       "cfg": 6.5,
       "sampler_name": "dpmpp_2m_sde",
       "scheduler": "exponential",
       "start_at_step": 0,
-      "end_at_step": 25,
+      "end_at_step": 23,
       "return_with_leftover_noise": "enable",
       "model": [
         "58",
@@ -121,11 +121,11 @@
     "inputs": {
       "add_noise": "disable",
       "noise_seed": 1066593109737125,
-      "steps": 30,
+      "steps": 28,
       "cfg": 6.5,
       "sampler_name": "dpmpp_2m_sde",
       "scheduler": "karras",
-      "start_at_step": 25,
+      "start_at_step": 23,
       "end_at_step": 10000,
       "return_with_leftover_noise": "disable",
       "model": [
@@ -180,7 +180,7 @@
       "ascore": 3,
       "width": 1024,
       "height": 1024,
-      "text": "poorly Rendered face, poorly drawn face, poor facial details, poorly drawn hands, poorly rendered hands, low resolution, blurry image, oversaturated, bad anatomy, signature, watermark, username, error, missing limbs, error, out of frame, extra fingers, mutated hands, poorly drawn hands, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username",
+      "text": "(embedding:ac_neg1.safetensors:1)",
       "clip": [
         "39",
         1

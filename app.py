@@ -24,7 +24,7 @@ client_id = str(uuid.uuid4())
 app = Flask(__name__)
 sock = Sock(app)
 CORS(app)
-admin_hash = os.environ.get('ADMIN_HASH')
+admin_hash = os.environ.get('ADMIN_HASH').split(",")
 
 def queue_prompt(prompt):
     p = {"prompt": prompt, "client_id": client_id}
@@ -134,7 +134,7 @@ def upload_image_to_gpu_server(file):
 @app.route('/api/products', methods=['GET'])
 def get_products():
     #Validate the admin key received in the query string
-    if request.args['key'] == admin_hash:
+    if request.args['key'] in admin_hash:
         try:
             return jsonify(ProductHandler().get_all_products())
         except Exception as e:
@@ -199,7 +199,7 @@ def validate_admin():
     curr_hash = hashlib.sha256(f'{username}:{password}'.encode('utf-8')).hexdigest()
     #Check if the hash is equal to the admin hash and return the response
     response = {'success':False, 'message': 'Invalid credentials provided. Access denied.'}
-    if curr_hash == admin_hash:
+    if curr_hash in admin_hash:
         response['success'] = True
         response['admin_id'] = curr_hash
         response['message'] = 'Access granted'
