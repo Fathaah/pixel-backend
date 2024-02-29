@@ -87,7 +87,7 @@
       "end_at_step": 23,
       "return_with_leftover_noise": "enable",
       "model": [
-        "58",
+        "53",
         0
       ],
       "positive": [
@@ -129,7 +129,7 @@
       "end_at_step": 10000,
       "return_with_leftover_noise": "disable",
       "model": [
-        "55",
+        "39",
         0
       ],
       "positive": [
@@ -221,38 +221,6 @@
     "class_type": "SaveImage",
     "_meta": {
       "title": "Save Image"
-    }
-  },
-  "55": {
-    "inputs": {
-      "b1": 1.3,
-      "b2": 1.4,
-      "s1": 0.9,
-      "s2": 0.2,
-      "model": [
-        "39",
-        0
-      ]
-    },
-    "class_type": "FreeU_V2",
-    "_meta": {
-      "title": "FreeU_V2"
-    }
-  },
-  "58": {
-    "inputs": {
-      "b1": 1.3,
-      "b2": 1.45,
-      "s1": 0.9,
-      "s2": 0.2,
-      "model": [
-        "53",
-        0
-      ]
-    },
-    "class_type": "FreeU_V2",
-    "_meta": {
-      "title": "FreeU_V2"
     }
   }
 }
