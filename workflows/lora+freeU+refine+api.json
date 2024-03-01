@@ -63,8 +63,8 @@
       "crop_h": 0,
       "target_width": 4096,
       "target_height": 4096,
-      "text_g": "(embedding:ac_neg1.safetensors:1)",
-      "text_l": "(embedding:ac_neg1.safetensors:1)",
+      "text_g": "(embedding:ac_neg1.safetensors:1), deformed hands, fused fingers, extra limbs",
+      "text_l": "(embedding:ac_neg1.safetensors:1), deformed hands, fused fingers, extra limbs",
       "clip": [
         "53",
         1
@@ -180,7 +180,7 @@
       "ascore": 3,
       "width": 1024,
       "height": 1024,
-      "text": "(embedding:ac_neg1.safetensors:1)",
+      "text": "(embedding:ac_neg1.safetensors:1), deformed hands, fused fingers, extra limbs",
       "clip": [
         "39",
         1
