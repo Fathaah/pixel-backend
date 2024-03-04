@@ -192,6 +192,10 @@ def fetch_gpu_address():
 
 @app.route('/api/admin/validate', methods=['POST'])
 def validate_admin():
+    gpu_server_address = fetch_gpu_address()
+    if gpu_server_address == '' or gpu_server_address is None:
+        response = {'success':False, 'message': 'GPU server unavailable. Please contacct afsh@kth.se'}
+
     #Get username and password from the formdata
     username = request.form.get('username')
     password = request.form.get('password')
