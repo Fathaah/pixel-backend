@@ -26,8 +26,8 @@
         0
       ],
       "vae": [
-        "37",
-        0
+        "39",
+        2
       ]
     },
     "class_type": "VAEDecode",
@@ -106,15 +106,6 @@
     "class_type": "KSamplerAdvanced",
     "_meta": {
       "title": "KSampler (Advanced)"
-    }
-  },
-  "37": {
-    "inputs": {
-      "vae_name": "sdxl_vae.safetensors"
-    },
-    "class_type": "VAELoader",
-    "_meta": {
-      "title": "Load VAE"
     }
   },
   "38": {
