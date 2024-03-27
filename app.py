@@ -18,6 +18,9 @@ from product_handler import ProductHandler
 from prompt_enhancer import PromptEnhancer
 from keyword_generator import KeywordGenerator
 from requests_toolbelt import MultipartEncoder
+from demo_request_handler import DemoDaoHandler
+import datetime
+from pixel_models.demo_dao import demo_dao
 
 server_address = "0.0.0.0"
 client_id = str(uuid.uuid4())
@@ -181,6 +184,19 @@ def generate_keywords():
     item = request.args.get('item').replace("_", " ")
     keywords = KeywordGenerator().generate_keywords(item)
     return jsonify({"keywords": keywords})
+
+@app.route('/api/put-demo-request', methods=['POST'])
+def add_demo_request():
+    request_data = request.get_json()
+    request_data['id'] = str(uuid.uuid4())
+    request_data['created_at'] = str(datetime.datetime.now())
+    demo_request = demo_dao(**request_data)
+    DemoDaoHandler().add_demo(demo_request)
+    return jsonify({"message": "Demo request added successfully"})
+
+@app.route('/api/get-demo-request', methods=['GET'])
+def get_demo_request():
+    return jsonify(DemoDaoHandler().get_all_demo())
 
 # move to utils
 @cachetools.cached(cachetools.TTLCache(maxsize=1024, ttl=30000))
