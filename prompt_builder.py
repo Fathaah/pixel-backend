@@ -80,7 +80,7 @@ def build_prompt_lora_ip_request(mini_prompt):
     prompt["9"]["inputs"]["seed"] = mini_prompt.generation_seed if (mini_prompt.generation_seed)  else random.randint(0, 0xffffffffffffffff)
     prompt["9"]["inputs"]["steps"] = mini_prompt.diffusion_steps
     prompt["6"]["inputs"]["image"] = mini_prompt.filename
-    prompt["5"]["inputs"]["weight"] = mini_prompt.influence
+    prompt["31"]["inputs"]["weight"] = mini_prompt.influence
     if(not mini_prompt.refine):
         prompt["9"]["inputs"]["model"][0] = "5"
     print("Prompt finally is : ", prompt)
