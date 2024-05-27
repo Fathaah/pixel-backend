@@ -1,12 +1,13 @@
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 import json
+import os
 
 class az_cosmos_db:
     def __init__(self, container_name, database_name="pixel-web" , endpoint="https://pixel-docdb.documents.azure.com:443/"):
         self.endpoint = endpoint
         self.database_name = database_name
         self.container_name = container_name
-        self.client = CosmosClient(endpoint, "EpBnhxLUgtd7BYsicsfHIzlakHFcTo0xtEBkn42SThQmR2DV90kUqBlQnXnIXUswEohtbpjZng7vACDbFW2sNg==")
+        self.client = CosmosClient(endpoint, os.environ.get("COSMOS_KEY"))
         self.database = self.client.get_database_client(database_name)
         self.container = self.database.get_container_client(container_name)
 
